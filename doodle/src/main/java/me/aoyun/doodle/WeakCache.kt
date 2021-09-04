@@ -13,9 +13,7 @@ object WeakCache {
         val key: Long,
         val bitmap: Bitmap,
         val queue: ReferenceQueue<Bitmap>
-    ) : WeakReference<Bitmap>(bitmap, queue) {
-
-    }
+    ) : WeakReference<Bitmap>(bitmap, queue)
 
     @Synchronized
     fun get(key: Long): Bitmap? {

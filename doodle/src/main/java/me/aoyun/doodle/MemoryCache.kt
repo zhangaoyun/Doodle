@@ -12,7 +12,7 @@ object MemoryCache {
     private const val CRITICAL_MEMORY = (3 shl 20).toLong()
 
     fun getBitmap(key: Long): Bitmap? {
-        var bitmap = LruCache.get(key);
+        var bitmap = LruCache.get(key)
         if (bitmap == null) {
             bitmap = WeakCache.get(key)
         }

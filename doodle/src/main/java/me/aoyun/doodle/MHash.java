@@ -33,7 +33,7 @@ public class MHash {
         int size = len - remain;
 
         for (int i = 0; i < size; i += 8) {
-            long k = ((long) data[i+7] << 56) +
+            long k = ((long) data[i + 7] << 56) +
                     ((long) (data[i + 6] & 0xFF) << 48) +
                     ((long) (data[i + 5] & 0xFF) << 40) +
                     ((long) (data[i + 4] & 0xFF) << 32) +

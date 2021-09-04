@@ -6,7 +6,6 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-
 /**
  * A class for parsing the exif orientation and other data from image header.
  * Glide自己实现了头部解析，主要是获取文件类型和exif旋转信息。
@@ -21,8 +20,10 @@ internal object HeaderParser {
 
     // "MM".
     private const val MOTOROLA_TIFF_MAGIC_NUMBER = 0x4D4D
+
     // "II".
     private const val INTEL_TIFF_MAGIC_NUMBER = 0x4949
+
     //"Exif\0\0";
     private val JPEG_EXIF_SEGMENT_PREAMBLE = byteArrayOf(69, 120, 105, 102, 0, 0)
 
@@ -225,24 +226,24 @@ internal object HeaderParser {
         return offset + 2 + 12 * tagIndex
     }
 
-    private class RandomAccessReader internal constructor(data: ByteArray, length: Int) {
+    private class RandomAccessReader(data: ByteArray, length: Int) {
         private val data: ByteBuffer = ByteBuffer.wrap(data)
-                .order(ByteOrder.BIG_ENDIAN)
-                .limit(length) as ByteBuffer
+            .order(ByteOrder.BIG_ENDIAN)
+            .limit(length) as ByteBuffer
 
-        internal fun order(byteOrder: ByteOrder) {
+        fun order(byteOrder: ByteOrder) {
             this.data.order(byteOrder)
         }
 
-        internal fun length(): Int {
+        fun length(): Int {
             return data.remaining()
         }
 
-        internal fun getInt32(offset: Int): Int {
+        fun getInt32(offset: Int): Int {
             return if (isAvailable(offset, 4)) data.getInt(offset) else -1
         }
 
-        internal fun getInt16(offset: Int): Short {
+        fun getInt16(offset: Int): Short {
             return if (isAvailable(offset, 2)) data.getShort(offset) else -1
         }
 

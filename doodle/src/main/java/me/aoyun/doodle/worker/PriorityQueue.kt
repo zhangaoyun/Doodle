@@ -27,7 +27,7 @@ package com.horizon.doodle.worker
 internal class PriorityQueue<E> {
     private var size = 0
     private val queues: Array<CircularQueue<E>> =
-         arrayOf(CircularQueue(), CircularQueue(), CircularQueue(), CircularQueue())
+        arrayOf(CircularQueue(), CircularQueue(), CircularQueue(), CircularQueue())
 
     fun offer(data: E, priority: Int) {
         val p = (priority + 2) and 3

@@ -2,8 +2,9 @@ package com.horizon.doodle.worker
 
 @Suppress("EqualsOrHashCode")
 internal class RunnableWrapper constructor(
-        private val r: Runnable,
-        private val trigger: Trigger) : Runnable {
+    private val r: Runnable,
+    private val trigger: Trigger
+) : Runnable {
     override fun run() {
         try {
             r.run()

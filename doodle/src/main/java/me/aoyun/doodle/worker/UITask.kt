@@ -28,6 +28,7 @@ abstract class UITask<Params, Progress, Result> : LifeListener {
     @Volatile
     var isDone = false
         private set
+
     @Volatile
     var status = Status.PENDING
         private set
@@ -115,8 +116,10 @@ abstract class UITask<Params, Progress, Result> : LifeListener {
                 } catch (e: InterruptedException) {
                     Log.w(mSimpleName, e)
                 } catch (e: ExecutionException) {
-                    throw RuntimeException("An e occured while executing doInBackground()",
-                            e.cause)
+                    throw RuntimeException(
+                        "An e occured while executing doInBackground()",
+                        e.cause
+                    )
                 } catch (e: CancellationException) {
                     postResultIfNotInvoked(null)
                 }

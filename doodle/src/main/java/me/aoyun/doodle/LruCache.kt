@@ -32,12 +32,12 @@ object LruCache {
     }
 
     @Synchronized
-    public fun clearMemory() {
+    fun clearMemory() {
         trimToSize(0)
     }
 
     @Synchronized
-    public fun trimMemory(level: Int) {
+    fun trimMemory(level: Int) {
         if (level == ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
             trimToSize(0)
         } else if (level == ComponentCallbacks2.TRIM_MEMORY_BACKGROUND) {

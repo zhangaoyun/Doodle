@@ -12,7 +12,8 @@ import java.io.Closeable
 import java.io.File
 
 object Utils {
-    private val HEX_DIGITS = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
+    private val HEX_DIGITS =
+        charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
 
     val context: Context by lazy {
         val ctx = DoodleContentProvider.ctx.applicationContext

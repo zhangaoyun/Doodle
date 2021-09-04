@@ -62,6 +62,7 @@ class Worker constructor(val request: Request, val imageView: ImageView?) :
 
         // 内存中没有缓存，尝试去磁盘中寻找
         if (bitmap == null) {
+            // 图片的路径
             val filePath = DiskCache.get(key)
             fromDiskCache = !TextUtils.isEmpty(filePath)
             Log.d("AoyunTAG", "key: $key")

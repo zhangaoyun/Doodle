@@ -1,10 +1,6 @@
 package com.horizon.doodle.worker
 
-import java.util.concurrent.RejectedExecutionHandler
-import java.util.concurrent.SynchronousQueue
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -19,9 +15,10 @@ import java.util.concurrent.atomic.AtomicInteger
  * 若 [capacity] <= 0, 不限制容量。
  */
 class PipeExecutor @JvmOverloads constructor(
-        windowSize: Int,
-        private val capacity: Int = -1,
-        private val rejectedHandler: RejectedExecutionHandler = defaultHandler) : PriorityExecutor {
+    windowSize: Int,
+    private val capacity: Int = -1,
+    private val rejectedHandler: RejectedExecutionHandler = defaultHandler
+) : PriorityExecutor {
 
     private val tasks = PriorityQueue<RunnableWrapper>()
     private val windowSize: Int = if (windowSize > 0) windowSize else 1
@@ -40,7 +37,8 @@ class PipeExecutor @JvmOverloads constructor(
             0, 256,
             60L, TimeUnit.SECONDS,
             SynchronousQueue(),
-            threadFactory)
+            threadFactory
+        )
     }
 
     private val trigger: Trigger = object : Trigger {

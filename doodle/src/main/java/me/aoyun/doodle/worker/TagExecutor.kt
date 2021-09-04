@@ -24,18 +24,22 @@ import java.util.concurrent.Future
  *    如果使之串行，配合缓存，第一个任务完成后，后面的任务可以直接取缓存，而避免重复加载；
  *    此外，非丢弃模式下，还可以当串行执行器用（tag相同串行执行，任务队列无限容量）。
  */
-class TagExecutor(private val executor: PipeExecutor,
-                  private val discard: Boolean = false) : PriorityExecutor {
+class TagExecutor(
+    private val executor: PipeExecutor,
+    private val discard: Boolean = false
+) : PriorityExecutor {
     // 正在调度的任务
     private val scheduledTasks = HashMap<String, Runnable>()
+
     // 丢弃模式下等待的任务
     private val waitingTasks by lazy { HashMap<String, TaskWrapper>() }
+
     // 非丢弃模式下等待的任务
     private val waitingQueues by lazy { HashMap<String, CircularQueue<TaskWrapper>>() }
 
     private class TaskWrapper(val r: Runnable, val priority: Int)
 
-    private inner class LaneTrigger(val tag : String) : Trigger{
+    private inner class LaneTrigger(val tag: String) : Trigger {
         override fun next() {
             executor.scheduleNext()
             scheduleNext(tag)
@@ -88,7 +92,7 @@ class TagExecutor(private val executor: PipeExecutor,
         } else {
             // 非丢弃模式下，每个tag都有一个无界队列可以缓存任务
             val queue = waitingQueues[tag]
-                    ?: CircularQueue<TaskWrapper>().apply { waitingQueues[tag] = this }
+                ?: CircularQueue<TaskWrapper>().apply { waitingQueues[tag] = this }
             queue.offer(TaskWrapper(r, priority))
         }
     }
