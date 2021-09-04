@@ -1,6 +1,7 @@
 package me.aoyun.doodle
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.ImageView
 
 object Dispatcher {
@@ -14,6 +15,7 @@ object Dispatcher {
         }
 
         if (bitmap == null) {
+            Log.d("AoyunTAG", "开始 Work")
             val loader = Worker(request, imageView)
             loader.priority(request.priority)
                 .hostHash(request.hostHash)
@@ -21,7 +23,10 @@ object Dispatcher {
         }
     }
 
-    fun feedback(request: Request, imageView: ImageView, result: Any?, beforeLoading: Boolean) {
+    fun feedback(request: Request, imageView: ImageView?, result: Any?, beforeLoading: Boolean) {
+        if (imageView == null) {
+            return
+        }
         var bitmap = result as? Bitmap
         if (result != null) {
             if (bitmap != null) {

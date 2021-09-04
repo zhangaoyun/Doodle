@@ -1,5 +1,6 @@
 package me.aoyun.doodle
 
+import android.util.Log
 import okhttp3.OkHttpClient
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -23,7 +24,7 @@ object Downloader {
         if (response.isSuccessful) {
             val inputStream = response.body()?.byteStream()
             if (inputStream != null) {
-
+                Log.d("AoyunTAG", "inputStream != null" )
             }
             return inputStream
         } else {

@@ -26,6 +26,7 @@ class Request {
     }
 
     fun into(target: ImageView) {
+        targetReference = WeakReference(target)
         fillSizeAndLoad(target.width, target.height)
     }
 

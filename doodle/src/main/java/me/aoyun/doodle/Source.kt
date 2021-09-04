@@ -3,6 +3,7 @@ package me.aoyun.doodle
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
+import android.util.Log
 import okhttp3.CacheControl
 import java.io.*
 
@@ -21,7 +22,7 @@ abstract class Source : Closeable {
 
     companion object {
         fun valueOf(src: Any?): Source {
-            if (src === null) {
+            if (src == null) {
                 throw IllegalArgumentException("source is null")
             }
             return when (src) {
@@ -35,6 +36,7 @@ abstract class Source : Closeable {
             val path = request.path
             return when {
                 path.startsWith("http") -> {
+                    Log.d("AoyunTAG", "path: $path")
                     checkCache(request) ?: let {
                         val builder = okhttp3.Request.Builder().url(path)
                         if (request.diskCacheStrategy == DiskCacheStrategy.NONE) {
@@ -90,7 +92,7 @@ class FileSource(private val file: File) : Source() {
 
 }
 
-class StreamSource constructor(private val inputStream: InputStream) : Source() {
+class StreamSource constructor(inputStream: InputStream) : Source() {
 
     private val recycledInputStream = RecycledInputStream(inputStream)
 
@@ -99,6 +101,7 @@ class StreamSource constructor(private val inputStream: InputStream) : Source() 
         get() {
             if (magicNum == 0) {
                 magicNum = HeaderParser.readInt(recycledInputStream)
+                Log.d("AoyunTAG", "magicNum: $magicNum")
                 recycledInputStream.rewind()
             }
             return magicNum

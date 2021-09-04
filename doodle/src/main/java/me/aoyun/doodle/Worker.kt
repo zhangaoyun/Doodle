@@ -3,6 +3,7 @@ package me.aoyun.doodle
 import android.graphics.Bitmap
 import android.os.Process
 import android.text.TextUtils
+import android.util.Log
 import android.widget.ImageView
 import com.horizon.doodle.worker.PipeExecutor
 import com.horizon.doodle.worker.PriorityExecutor
@@ -60,10 +61,11 @@ class Worker constructor(val request: Request, val imageView: ImageView?) :
         bitmap = MemoryCache.getBitmap(key)
         if (bitmap == null) {
             val filePath = DiskCache.get(key)
-            val fromDiskCache = TextUtils.isEmpty(filePath)
-            source =
-                if (fromDiskCache) Source.valueOf(File(filePath))
-                else Source.parse(request)
+            val fromDiskCache = !TextUtils.isEmpty(filePath)
+//            source =
+//                if (fromDiskCache) Source.valueOf(File(filePath))
+//                else Source.parse(request)
+            source = Source.parse(request)
             val bitmap = Decoder.decode(source, request, fromDiskCache)
 
             // TODO transform
@@ -72,6 +74,7 @@ class Worker constructor(val request: Request, val imageView: ImageView?) :
                 // TODO 缓存
             }
 
+            Log.d("AoyunTAG", "doInBackground finish ${bitmap == null}")
             return bitmap
         }
 
@@ -81,7 +84,8 @@ class Worker constructor(val request: Request, val imageView: ImageView?) :
     override fun onPostExecute(result: Any?) {
         val imageView = target
         if (imageView != null) {
-            Dispatcher.feedback(request, imageView, result, false)
+
         }
+        Dispatcher.feedback(request, imageView, result, false)
     }
 }
