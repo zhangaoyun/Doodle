@@ -14,6 +14,7 @@ class Request {
     var bitmapConfig = Bitmap.Config.ARGB_8888
     var clipType = Decoder.NO_CLIP
 
+    var memoryCacheStrategy = MemoryCacheStrategy.LRU
     var diskCacheStrategy = DiskCacheStrategy.ALL
 
     var cacheInterceptor: CacheInterceptor? = null

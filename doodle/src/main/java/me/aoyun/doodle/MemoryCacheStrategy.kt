@@ -1,6 +1,6 @@
 package me.aoyun.doodle
 
-enum class Strategy {
+enum class MemoryCacheStrategy {
     NONE,
     WEAK,
     LRU

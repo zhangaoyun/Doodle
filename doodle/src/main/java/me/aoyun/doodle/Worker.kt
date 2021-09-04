@@ -59,19 +59,30 @@ class Worker constructor(val request: Request, val imageView: ImageView?) :
         var source: Source? = null
 
         bitmap = MemoryCache.getBitmap(key)
+
+        // 内存中没有缓存，尝试去磁盘中寻找
         if (bitmap == null) {
             val filePath = DiskCache.get(key)
-            val fromDiskCache = !TextUtils.isEmpty(filePath)
-//            source =
-//                if (fromDiskCache) Source.valueOf(File(filePath))
-//                else Source.parse(request)
-            source = Source.parse(request)
-            val bitmap = Decoder.decode(source, request, fromDiskCache)
+            fromDiskCache = !TextUtils.isEmpty(filePath)
+            source =
+                if (fromDiskCache) Source.valueOf(File(filePath!!))
+                else Source.parse(request)
+            bitmap = Decoder.decode(source, request, fromDiskCache)
 
             // TODO transform
 
+            // 得到了 bitmap
             if (bitmap != null) {
-                // TODO 缓存
+                // 处理内存缓存
+                MemoryCache.checkMemory()
+                if (request.memoryCacheStrategy != MemoryCacheStrategy.NONE) {
+                    val toWeak = request.memoryCacheStrategy == MemoryCacheStrategy.WEAK
+                    MemoryCache.putBitmap(key, bitmap, toWeak)
+                }
+                // 处理磁盘缓存
+                if (!fromDiskCache && request.diskCacheStrategy != DiskCacheStrategy.NONE) {
+                    storeResult(key, bitmap)
+                }
             }
 
             Log.d("AoyunTAG", "doInBackground finish ${bitmap == null}")
