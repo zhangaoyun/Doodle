@@ -1,4 +1,7 @@
 package me.aoyun.doodle
 
-class Strategy {
+enum class Strategy {
+    NONE,
+    WEAK,
+    LRU
 }

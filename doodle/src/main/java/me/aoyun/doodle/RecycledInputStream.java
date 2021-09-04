@@ -1,4 +1,4 @@
-package com.horizon.doodle;
+package me.aoyun.doodle;
 
 
 
@@ -270,8 +270,8 @@ class RecycledInputStream extends InputStream {
      *
      * @return a <code>boolean</code> indicating if this stream type supports
      * the <code>mark</code> and <code>reset</code> methods.
-     * @see java.io.InputStream#mark(int)
-     * @see java.io.InputStream#reset()
+     * @see InputStream#mark(int)
+     * @see InputStream#reset()
      */
     public boolean markSupported() {
         return true;

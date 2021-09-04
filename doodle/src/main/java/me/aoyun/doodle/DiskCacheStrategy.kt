@@ -1,4 +1,8 @@
 package me.aoyun.doodle
 
-class DiskCacheStrategy {
+enum class DiskCacheStrategy {
+    NONE,
+    SOURCE,
+    RESULT,
+    ALL
 }
