@@ -1,7 +1,5 @@
 package me.aoyun.doodle;
 
-
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -10,6 +8,7 @@ import java.io.InputStream;
  * in {@link #skip(long)} (sometimes double the buffer even buffer capacity is enough).
  * We just copy some code from source code in API level 26,
  * and change some implement to match this project.
+ * copy了Android 8.0的SDK的BufferedInputStream， 精简代码，加入一些缓冲区复用的代码等
  */
 class RecycledInputStream extends InputStream {
 
@@ -155,7 +154,7 @@ class RecycledInputStream extends InputStream {
      *                     invoking its {@link #close()} method,
      *                     or an I/O error occurs.
      */
-    public int read( byte b[], int off, int len)
+    public int read(byte b[], int off, int len)
             throws IOException {
         if ((off | len | (off + len) | (b.length - (off + len))) < 0) {
             throw new IndexOutOfBoundsException();
@@ -287,7 +286,7 @@ class RecycledInputStream extends InputStream {
      * @throws IOException if an I/O error occurs.
      */
     public void close() throws IOException {
-        if(buf != null){
+        if (buf != null) {
             ByteArrayPool.INSTANCE.recycleArray(buf);
             buf = null;
         }

@@ -50,22 +50,44 @@ class FileSource(private val file: File) : Source() {
 
 }
 
-class StreamSource : Source() {
+class StreamSource constructor(private val inputStream: InputStream) : Source() {
+
+    private val recycledInputStream = RecycledInputStream(inputStream)
+
     override val magic: Int
-        get() = TODO("Not yet implemented")
+        @Throws(IOException::class)
+        get() {
+            if (magicNum == 0) {
+                magicNum = HeaderParser.readInt(recycledInputStream)
+                recycledInputStream.rewind()
+            }
+            return magicNum
+        }
+
     override val orientation: Int
-        get() = TODO("Not yet implemented")
+        get() = HeaderParser.getOrientation(recycledInputStream)
 
     override fun decode(options: BitmapFactory.Options): Bitmap? {
-        TODO("Not yet implemented")
+        if (options.inTempStorage == null) {
+            options.inTempStorage = ByteArrayPool.basicArray
+        }
+        return if (options.inJustDecodeBounds) {
+            recycledInputStream.mark(Integer.MAX_VALUE)
+            val bitmap = BitmapFactory.decodeStream(recycledInputStream, null, options)
+            recycledInputStream.rewind()
+            bitmap
+        } else {
+            BitmapFactory.decodeStream(recycledInputStream, null, options)
+        }
+
     }
 
     override fun decodeRegion(rect: Rect, options: BitmapFactory.Options): Bitmap? {
-        TODO("Not yet implemented")
+        return BitmapFactory.decodeStream(recycledInputStream, rect, options)
     }
 
     override fun close() {
-        TODO("Not yet implemented")
+        recycledInputStream.close()
     }
 
 }

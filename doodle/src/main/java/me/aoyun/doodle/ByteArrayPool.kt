@@ -6,7 +6,10 @@ import java.io.InputStream
 import java.lang.ref.WeakReference
 import java.util.*
 
-
+/**
+ * 字节数组池，缓存字节数组。
+ * <p> 存到池中和从池中获取。
+ */
 internal object ByteArrayPool {
     // max array size, 128M
     private const val MAX_SIZE = 1 shl 27

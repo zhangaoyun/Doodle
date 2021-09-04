@@ -5,7 +5,7 @@ import android.widget.ImageView
 class Request {
 
     private val path: String
-    private val key: Long = MHash.hash64(toString())
+    val key: Long = MHash.hash64(toString())
 
     constructor(path: String) {
         this.path = path
