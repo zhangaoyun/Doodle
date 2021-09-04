@@ -2,6 +2,7 @@ package me.aoyun.doodle
 
 import android.graphics.Bitmap
 import android.text.TextUtils
+import android.util.Log
 import android.widget.ImageView
 import com.horizon.doodle.worker.Priority
 import java.lang.ref.WeakReference
@@ -10,7 +11,11 @@ class Request {
 
     private var sourceKey: String = ""
     val path: String
-    val key: Long = MHash.hash64(toString())
+
+    /**
+     * 注意 lazy，否则在 Request 类创建时就会给 key 赋值，导致所有 path 都是一样的
+     */
+    val key: Long by lazy { MHash.hash64(toString()) }
     var priority = Priority.NORMAL
     var hostHash = 0
     var bitmapConfig = Bitmap.Config.ARGB_8888
@@ -29,7 +34,14 @@ class Request {
     var workerReference: WeakReference<Worker>? = null
 
     constructor(path: String) {
-        this.path = path
+        Log.d("AoyunTAG", "load $path")
+        if (TextUtils.isEmpty(path)) {
+            this.path = ""
+        } else {
+            this.path =
+                if (path.startsWith("http") || path.contains("://")) path
+                else "file://$path"
+        }
     }
 
     fun into(target: ImageView) {

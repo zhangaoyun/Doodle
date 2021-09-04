@@ -10,7 +10,11 @@ class SingleImageActivity : AppCompatActivity() {
         setContentView(R.layout.activity_single_image)
 
         val imageView = findViewById<ImageView>(R.id.imageView)
-        Doodle.load("https://www.wanandroid.com/blogimgs/50c115c2-cf6c-4802-aa7b-a4334de444cd.png")
+//        Doodle.load("https://www.wanandroid.com/blogimgs/50c115c2-cf6c-4802-aa7b-a4334de444cd.png")
+//            .into(imageView)
+
+        val path = "file:///android_asset/lenna.jpg"
+        Doodle.load(path)
             .into(imageView)
     }
 }

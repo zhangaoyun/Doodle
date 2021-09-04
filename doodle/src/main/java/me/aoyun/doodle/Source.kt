@@ -1,7 +1,9 @@
 package me.aoyun.doodle
 
+import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.BitmapRegionDecoder
 import android.graphics.Rect
 import android.util.Log
 import okhttp3.CacheControl
@@ -21,6 +23,12 @@ abstract class Source : Closeable {
     abstract fun decodeRegion(rect: Rect, options: BitmapFactory.Options): Bitmap?
 
     companion object {
+
+        private const val ASSET_PREFIX = "file:///android_asset/"
+        private const val ASSET_PREFIX_LENGTH = ASSET_PREFIX.length
+        private const val FILE_PREFIX = "file://"
+        private const val FILE_PREFIX_LENGTH = FILE_PREFIX.length
+
         fun valueOf(src: Any?): Source {
             if (src == null) {
                 throw IllegalArgumentException("source is null")
@@ -28,6 +36,7 @@ abstract class Source : Closeable {
             return when (src) {
                 is File -> FileSource(src)
                 is InputStream -> StreamSource(src)
+                is AssetManager.AssetInputStream -> AssetSource(src)
                 else -> throw IllegalArgumentException("Unsupported src " + src.javaClass.simpleName)
             }
         }
@@ -45,7 +54,14 @@ abstract class Source : Closeable {
                         valueOf(Downloader.getSource(builder.build()))
                     }
                 }
-                // TODO
+                path.startsWith(ASSET_PREFIX) -> {
+                    valueOf(
+                        Utils.context.assets.open(
+                            path.substring(ASSET_PREFIX_LENGTH)
+                        )
+                    )
+                }
+                path.startsWith(FILE_PREFIX) -> valueOf(File(path.substring(FILE_PREFIX_LENGTH)))
                 else -> null
             }
         }
@@ -134,5 +150,39 @@ class StreamSource constructor(inputStream: InputStream) : Source() {
         recycledInputStream.close()
     }
 
+}
+
+class AssetSource(private val assetStream: AssetManager.AssetInputStream) : Source() {
+
+    override val magic: Int
+        get() {
+            if (magicNum == 0) {
+                assetStream.mark(4)
+                magicNum = HeaderParser.readInt(assetStream)
+                assetStream.reset()
+            }
+            return magicNum
+        }
+
+    override val orientation: Int
+        get() = HeaderParser.getOrientation(assetStream)
+
+    override fun decode(options: BitmapFactory.Options): Bitmap? {
+        if (options.inJustDecodeBounds) {
+            assetStream.mark(Integer.MAX_VALUE)
+            val bitmap = BitmapFactory.decodeStream(assetStream, null, options)
+            assetStream.reset()
+            return bitmap
+        }
+        return BitmapFactory.decodeStream(assetStream, null, options)
+    }
+
+    override fun decodeRegion(rect: Rect, options: BitmapFactory.Options): Bitmap? {
+        return BitmapRegionDecoder.newInstance(assetStream, false).decodeRegion(rect, options)
+    }
+
+    override fun close() {
+        assetStream.close()
+    }
 
 }
