@@ -9,6 +9,7 @@ import java.nio.ByteOrder
 
 /**
  * A class for parsing the exif orientation and other data from image header.
+ * Glide自己实现了头部解析，主要是获取文件类型和exif旋转信息。
  *
  * Copy from Glide
  */

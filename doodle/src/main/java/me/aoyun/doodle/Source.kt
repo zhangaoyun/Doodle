@@ -3,6 +3,7 @@ package me.aoyun.doodle
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
+import okhttp3.CacheControl
 import java.io.*
 
 abstract class Source : Closeable {
@@ -17,6 +18,45 @@ abstract class Source : Closeable {
     abstract fun decode(options: BitmapFactory.Options): Bitmap?
 
     abstract fun decodeRegion(rect: Rect, options: BitmapFactory.Options): Bitmap?
+
+    companion object {
+        fun valueOf(src: Any?): Source {
+            if (src === null) {
+                throw IllegalArgumentException("source is null")
+            }
+            return when (src) {
+                is File -> FileSource(src)
+                is InputStream -> StreamSource(src)
+                else -> throw IllegalArgumentException("Unsupported src " + src.javaClass.simpleName)
+            }
+        }
+
+        fun parse(request: Request): Source? {
+            val path = request.path
+            return when {
+                path.startsWith("http") -> {
+                    checkCache(request) ?: let {
+                        val builder = okhttp3.Request.Builder().url(path)
+                        if (request.diskCacheStrategy == DiskCacheStrategy.NONE) {
+                            builder.cacheControl(CacheControl.Builder().noCache().noCache().build())
+                        }
+                        valueOf(Downloader.getSource(builder.build()))
+                    }
+                }
+                // TODO
+                else -> null
+            }
+        }
+
+        private fun checkCache(request: Request): Source? {
+            val url = request.path
+            if (request.cacheInterceptor != null) {
+
+            }
+            return null
+        }
+    }
+
 }
 
 class FileSource(private val file: File) : Source() {
@@ -86,8 +126,10 @@ class StreamSource constructor(private val inputStream: InputStream) : Source() 
         return BitmapFactory.decodeStream(recycledInputStream, rect, options)
     }
 
+
     override fun close() {
         recycledInputStream.close()
     }
+
 
 }

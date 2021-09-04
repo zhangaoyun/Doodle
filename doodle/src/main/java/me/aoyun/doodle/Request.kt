@@ -1,11 +1,25 @@
 package me.aoyun.doodle
 
+import android.graphics.Bitmap
 import android.widget.ImageView
+import com.horizon.doodle.worker.Priority
+import java.lang.ref.WeakReference
 
 class Request {
 
-    private val path: String
+    val path: String
     val key: Long = MHash.hash64(toString())
+    var priority = Priority.NORMAL
+    var hostHash = 0
+    var bitmapConfig = Bitmap.Config.ARGB_8888
+    var clipType = Decoder.NO_CLIP
+
+    var diskCacheStrategy = DiskCacheStrategy.ALL
+
+    var cacheInterceptor: CacheInterceptor? = null
+
+    var targetReference : WeakReference<ImageView>? = null
+    var workerReference : WeakReference<Worker>? = null
 
     constructor(path: String) {
         this.path = path

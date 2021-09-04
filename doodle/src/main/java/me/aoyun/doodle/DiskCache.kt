@@ -4,8 +4,12 @@ import android.graphics.Bitmap
 
 object DiskCache {
 
+    /**
+     * @return 图片文件的路径，不存在返回 null
+     */
     fun get(key: Long): String? {
-
+        // TODO
+        return ""
     }
 
     fun put(key: Long, bitmap: Bitmap) {
