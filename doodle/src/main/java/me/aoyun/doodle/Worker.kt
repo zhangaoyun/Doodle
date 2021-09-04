@@ -64,6 +64,9 @@ class Worker constructor(val request: Request, val imageView: ImageView?) :
         if (bitmap == null) {
             val filePath = DiskCache.get(key)
             fromDiskCache = !TextUtils.isEmpty(filePath)
+            Log.d("AoyunTAG", "key: $key")
+            Log.d("AoyunTAG", "fromDiskCache: $fromDiskCache")
+            Log.d("AoyunTAG", "filePath: $filePath")
             source =
                 if (fromDiskCache) Source.valueOf(File(filePath!!))
                 else Source.parse(request)

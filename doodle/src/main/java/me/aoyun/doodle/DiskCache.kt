@@ -21,7 +21,7 @@ object DiskCache {
     private val journals: HashMap<Long, JournalValue> by lazy {
         val diskCachePath = Config.diskCachePath
         cachePath = if (diskCachePath.isEmpty()) {
-            Utils.cacheDir + "/doodle/result"
+            Utils.cacheDir + "/doodle/result/"
         } else {
             diskCachePath
         }
