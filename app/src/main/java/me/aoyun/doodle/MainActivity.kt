@@ -15,6 +15,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, SingleImageActivity::class.java))
         }
 
-
+        findViewById<Button>(R.id.buttonToGridView).apply {
+            setOnClickListener {
+                startActivity(Intent(this@MainActivity, GridViewActivity::class.java))
+            }
+        }
     }
 }
