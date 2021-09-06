@@ -1,9 +1,11 @@
 package me.aoyun.doodle
 
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.util.Log
 import android.widget.ImageView
+import androidx.constraintlayout.widget.Placeholder
 import com.horizon.doodle.worker.Priority
 import java.lang.ref.WeakReference
 
@@ -20,6 +22,8 @@ class Request {
     var hostHash = 0
     var bitmapConfig = Bitmap.Config.ARGB_8888
     var clipType = Decoder.NO_CLIP
+    var placeholderResId: Int = -1
+    var placeholderDrawable: Drawable? = null
 
     // decode parameter
     internal var viewWidth: Int = 0
@@ -51,6 +55,11 @@ class Request {
 
     private fun fillSizeAndLoad(width: Int, height: Int) {
         Dispatcher.start(this)
+    }
+
+    fun placeholder(placeholderResId: Int): Request {
+        this.placeholderResId = placeholderResId
+        return this
     }
 
     override fun toString(): String {

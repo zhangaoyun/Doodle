@@ -37,6 +37,7 @@ class GridViewAdapter(private val context: Context) : BaseAdapter() {
         val url = getItem(position)
 
         Doodle.load(url)
+            .placeholder(R.drawable.placeholder)
             .into(imageView)
 
         return imageView

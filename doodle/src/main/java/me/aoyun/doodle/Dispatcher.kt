@@ -14,6 +14,8 @@ object Dispatcher {
             imageView = request.targetReference!!.get()
         }
 
+        feedback(request, imageView, bitmap, true)
+
         if (bitmap == null) {
             Log.d("AoyunTAG", "开始 Work")
             val loader = Worker(request, imageView)
@@ -32,7 +34,18 @@ object Dispatcher {
             if (bitmap != null) {
                 imageView.setImageBitmap(bitmap)
             }
+        } else {
+            if (beforeLoading) {
+                setPlaceholder(request, imageView)
+            }
         }
+    }
 
+    private fun setPlaceholder(request: Request, imageView: ImageView) {
+        if (request.placeholderDrawable != null) {
+            imageView.setImageDrawable(request.placeholderDrawable)
+        } else if (request.placeholderResId >= 0) {
+            imageView.setImageResource(request.placeholderResId)
+        }
     }
 }
