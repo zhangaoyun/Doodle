@@ -46,7 +46,7 @@ object Utils {
             true
         } else {
             val parentFile = file.parentFile
-            parentFile != null && (parentFile.isDirectory || parentFile.mkdir()) && file.createNewFile()
+            parentFile != null && (parentFile.isDirectory || parentFile.mkdirs()) && file.createNewFile()
         }
     }
 

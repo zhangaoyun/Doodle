@@ -1,6 +1,7 @@
 package me.aoyun.doodle
 
 import android.graphics.Bitmap
+import android.util.Log
 import java.io.File
 import java.io.FileOutputStream
 import java.io.RandomAccessFile
@@ -18,7 +19,7 @@ object DiskCache {
     private lateinit var channel: FileChannel
     private lateinit var buffer: MappedByteBuffer
 
-    private val journals: HashMap<Long, JournalValue> by lazy {
+    private val journals= HashMap<Long, JournalValue>().apply {
         val diskCachePath = Config.diskCachePath
         cachePath = if (diskCachePath.isEmpty()) {
             Utils.cacheDir + "/doodle/result/"
@@ -26,9 +27,13 @@ object DiskCache {
             diskCachePath
         }
         HashMap<Long, JournalValue>().apply {
-            readJournal(this)
-            // update access time
-            checkFile(this)
+            try {
+                readJournal(this)
+                // update access time
+                checkFile(this)
+            } catch (e: Exception) {
+                Log.e("AoyunTAG", e.printStackTrace().toString())
+            }
         }
     }
 
@@ -75,8 +80,10 @@ object DiskCache {
                 if (!tmpFile.renameTo(File(filename))) {
                     return
                 }
-                addJournal(key, fileLen)
-                // TODO checksize
+                synchronized(this) {
+                    addJournal(key, fileLen)
+                    // TODO checksize
+                }
             }
         }
     }
