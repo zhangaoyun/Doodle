@@ -30,7 +30,7 @@ class GridViewAdapter(private val context: Context) : BaseAdapter() {
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val imageView = convertView as? ImageView ?: ImageView(context).apply {
+        val imageView = convertView as? SquaredImageView ?: SquaredImageView(context).apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
         }
 
