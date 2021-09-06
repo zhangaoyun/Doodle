@@ -2,10 +2,10 @@ package me.aoyun.doodle
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import android.widget.ImageView
-import androidx.constraintlayout.widget.Placeholder
 import com.horizon.doodle.worker.Priority
 import java.lang.ref.WeakReference
 
@@ -13,6 +13,7 @@ class Request {
 
     private var sourceKey: String = ""
     val path: String
+    var uri: Uri? = null
 
     /**
      * 注意 lazy，否则在 Request 类创建时就会给 key 赋值，导致所有 path 都是一样的
@@ -46,6 +47,11 @@ class Request {
                 if (path.startsWith("http") || path.contains("://")) path
                 else "file://$path"
         }
+    }
+
+    constructor(resId: Int) {
+        path = Utils.toUriPath(resId)
+        diskCacheStrategy = DiskCacheStrategy.NONE
     }
 
     fun into(target: ImageView) {

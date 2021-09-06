@@ -20,5 +20,10 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this@MainActivity, GridViewActivity::class.java))
             }
         }
+        findViewById<Button>(R.id.buttonToGif).apply {
+            setOnClickListener {
+                startActivity(Intent(this@MainActivity, GifActivity::class.java))
+            }
+        }
     }
 }

@@ -9,4 +9,8 @@ object Doodle {
     fun load(path: String): Request {
         return Request(path)
     }
+
+    fun load(resId: Int): Request {
+        return Request(resId)
+    }
 }

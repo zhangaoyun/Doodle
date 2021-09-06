@@ -1,6 +1,7 @@
 package me.aoyun.doodle
 
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.widget.ImageView
 
@@ -33,6 +34,8 @@ object Dispatcher {
         if (result != null) {
             if (bitmap != null) {
                 imageView.setImageBitmap(bitmap)
+            } else if (result is Drawable) {
+                imageView.setImageDrawable(result)
             }
         } else {
             if (beforeLoading) {

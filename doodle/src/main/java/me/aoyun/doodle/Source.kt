@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.BitmapRegionDecoder
 import android.graphics.Rect
+import android.net.Uri
 import android.util.Log
 import okhttp3.CacheControl
 import java.io.*
@@ -17,6 +18,8 @@ abstract class Source : Closeable {
 
     // 旋转方向，EXIF专属信息
     abstract val orientation: Int
+
+    abstract val data: ByteArray
 
     abstract fun decode(options: BitmapFactory.Options): Bitmap?
 
@@ -41,7 +44,7 @@ abstract class Source : Closeable {
             }
         }
 
-        fun parse(request: Request): Source? {
+        fun parse(request: Request): Source {
             val path = request.path
             return when {
                 path.startsWith("http") -> {
@@ -62,7 +65,12 @@ abstract class Source : Closeable {
                     )
                 }
                 path.startsWith(FILE_PREFIX) -> valueOf(File(path.substring(FILE_PREFIX_LENGTH)))
-                else -> null
+                else -> valueOf(
+                    Utils.context.contentResolver.openInputStream(
+                        (request.uri
+                            ?: Uri.parse(path))
+                    )
+                )
             }
         }
 
@@ -93,6 +101,9 @@ class FileSource(private val file: File) : Source() {
 
     override val orientation: Int
         get() = HeaderParser.getOrientation(FileInputStream(file))
+
+    override val data: ByteArray
+        get() = ByteArrayPool.loadData(FileInputStream(file))
 
     override fun decode(options: BitmapFactory.Options): Bitmap? {
         return BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options)
@@ -125,6 +136,9 @@ class StreamSource constructor(inputStream: InputStream) : Source() {
 
     override val orientation: Int
         get() = HeaderParser.getOrientation(recycledInputStream)
+
+    override val data: ByteArray
+        get() = ByteArrayPool.loadData(recycledInputStream)
 
     override fun decode(options: BitmapFactory.Options): Bitmap? {
         if (options.inTempStorage == null) {
@@ -166,6 +180,9 @@ class AssetSource(private val assetStream: AssetManager.AssetInputStream) : Sour
 
     override val orientation: Int
         get() = HeaderParser.getOrientation(assetStream)
+
+    override val data: ByteArray
+        get() = ByteArrayPool.loadData(assetStream)
 
     override fun decode(options: BitmapFactory.Options): Bitmap? {
         if (options.inJustDecodeBounds) {

@@ -2,10 +2,12 @@ package me.aoyun.doodle
 
 import android.app.Activity
 import android.app.Application
+import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import com.horizon.doodle.worker.LogProxy
 import com.horizon.doodle.worker.lifecycle.LifeEvent
 import com.horizon.doodle.worker.lifecycle.LifecycleManager
 import java.io.Closeable
@@ -92,5 +94,20 @@ object Utils {
             }
 
         })
+    }
+
+    fun toUriPath(resID: Int): String {
+        if (resID != 0) {
+            try {
+                val resources = Utils.context.resources
+                return (ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
+                        + resources.getResourcePackageName(resID) + "/"
+                        + resources.getResourceTypeName(resID) + "/"
+                        + resources.getResourceEntryName(resID))
+            } catch (e: Exception) {
+                LogProxy.e("Utils", e)
+            }
+        }
+        return ""
     }
 }

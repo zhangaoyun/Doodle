@@ -71,6 +71,11 @@ class Worker constructor(val request: Request, val imageView: ImageView?) :
             source =
                 if (fromDiskCache) Source.valueOf(File(filePath!!))
                 else Source.parse(request)
+
+            val gifDecoder = Config.gifDecoder
+            if (!fromDiskCache && gifDecoder!= null && HeaderParser.isGif(source.magic)) {
+                return gifDecoder.decode(source.data)
+            }
             bitmap = Decoder.decode(source, request, fromDiskCache)
 
             // TODO transform
